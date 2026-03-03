@@ -95,7 +95,7 @@ def insertar_datos_avro(spark, db_name, table_name, df_source, partition_col=Non
             .saveAsTable(table_full_name)
             
     # El comando mágico para que DBeaver vea los datos
-    #spark.sql(f"MSCK REPAIR TABLE {table_full_name}")
+    spark.sql(f"MSCK REPAIR TABLE {table_full_name}")
     
     print(f"✅ Datos insertados y metadatos refrescados en '{table_full_name}'")
 
@@ -107,7 +107,7 @@ TABLAS_CONFIG = [
     {
         "nombre": "CUSTOMERS",
         "archivo_avsc": "customers.avsc",
-        "partitioned_by": None, # Evitamos la duplicidad con el esquema AVSC
+        "partitioned_by": ["Contract"], # Particionamos por contrato para análisis
         "dynamic_partition": True
     }
 ]
@@ -173,5 +173,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

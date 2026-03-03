@@ -20,9 +20,9 @@ def parse_arguments():
     parser.add_argument('--username', type=str, default='hadoop', help='Usuario HDFS')
     parser.add_argument('--base_path', type=str, default='/user', help='Ruta base en HDFS')
     # Ajustado a tu ruta actual
-    parser.add_argument('--data_path', type=str, 
-                        default='/user/hadoop/dataset', 
-                        help='Ruta de los datos en HDFS (archivo ya copiado con hdfs dfs -put)')
+    parser.add_argument('--local_data_path', type=str, 
+                        default='file:/home/hadoop/topicos-fuga-clientes/datalake/dataset', 
+                        help='Ruta local de datos')
     return parser.parse_args()
 
 # =============================================================================
@@ -121,13 +121,14 @@ def main():
         archivo_datos = "customers.data"
         esquema = SCHEMAS["CUSTOMERS"]
         
-        # 3. Definición de rutas
-        # archivo fuente ubicado en HDFS (no local)
-        ruta_hdfs_datos = f"{args.data_path}/{archivo_datos}"
-        # ubicación de salida en la base workload
+        # 3. Definición de RUTAS (Aquí estaba el detalle)
+        # Esta es la ruta del archivo fuente en HDFS
+        ruta_hdfs_datos = f"{args.local_data_path}/{archivo_datos}"
+        
+        # Esta es la ruta donde Hive guardará los datos de la tabla
         ruta_table_hive = f"{args.base_path}/{args.username}/datalake/{db_name}/{table_name.lower()}"
         
-        print(f"📥 Procesando: {table_name} | Archivo HDFS Fuente: {ruta_hdfs_datos}")
+        print(f"📥 Procesando: {table_name} | Archivo Fuente: {ruta_hdfs_datos}")
         
         # 4. Lectura de datos desde HDFS
         df = spark.read.csv(
